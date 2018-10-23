@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.user.parent.mybatis.dao.UserMapper">
+    <select id="findByLoginName" resultType="com.user.parent.mybatis.bean.Member">
+        SELECT * FROM member where loginName = #{loginName} and enabled = 1
+    </select>
+    <select id="findById" resultType="com.user.parent.mybatis.bean.Member">
+        SELECT * FROM member where id = #{id} and enabled = 1
+    </select>
+    <!-- update -->
+    <update id="update" parameterType="com.user.parent.mybatis.bean.Member">
+        UPDATE member
+        <set>
+            <if test="failedLogins !=null">
+                failedLogins = #{failedLogins} ,
+            </if>
+            <if test="enabled !=null">
+                enabled = #{enabled} ,
+            </if>
+            <if test="updateTime !=null">
+                updateTime = #{updateTime} ,
+            </if>
+            <if test="passwdHash !=null">
+                passwdHash = #{passwdHash} ,
+            </if>
+
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="getShopByCode" resultType="com.user.parent.mybatis.response.MemberResponse">
+        select p.address,p.phoneNum,p.shopName,y.companyName,d.brandName from shop p,companybrand d,company y
+        where  p.companyId = y.id and p.brandId = d.id and p.shopCode in (${code}) limit 1
+    </select>
+
+    <select id="getToken" resultType="com.user.parent.mybatis.bean.TokenInfo">
+            SELECT
+            *
+            FROM
+            tokenInfo
+            where loginName = #{loginName}
+            order by id desc
+            limit 1
+    </select>
+</mapper>
